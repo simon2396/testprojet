@@ -54,195 +54,192 @@ public class testprojet {
     File[] listOfFiles = folder.listFiles();
     for (File file : listOfFiles) {
         if (file.isFile()) {
-        System.out.println(file.getName());
-        FileInputStream fstream = new FileInputStream(file);
-        GZIPInputStream gzStream = new GZIPInputStream(fstream);
-        InputStreamReader isr = new InputStreamReader(gzStream);
-        BufferedReader br = new BufferedReader(isr);
-        String line;
-        Hashtable table = new Hashtable();
-        StringTokenizer st;
-        String mot;
-        int nbOcc;
+            System.out.println(file.getName());
+            FileInputStream fstream = new FileInputStream(file);
+            GZIPInputStream gzStream = new GZIPInputStream(fstream);
+            InputStreamReader isr = new InputStreamReader(gzStream);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            Hashtable table = new Hashtable();
+            StringTokenizer st;
+            String mot;
+            int nbOcc;
 
         
-        //Read File Line By Line
-        ArrayList<ArrayList<String>> matrix = new ArrayList<ArrayList<String>>();
-        int k =0;
+             //Read File Line By Line
+            ArrayList<ArrayList<String>> matrix = new ArrayList<ArrayList<String>>();
+            int k =0;
         
-        while ((line = br.readLine()) != null) {
-            // We get the Json part of the file
-            String json_part=line.substring(44,line.length()-11);
-            JSONObject text = new JSONObject(json_part);
-            //System.out.println(tasse.getString("text")); 
-            //System.out.println(json_part);
-            ArrayList line_word =new ArrayList();
+            while ((line = br.readLine()) != null) {
+                // We get the Json part of the file
+                String json_part=line.substring(44,line.length()-11);
+                JSONObject text = new JSONObject(json_part);
+                //System.out.println(tasse.getString("text")); 
+                //System.out.println(json_part);
+                ArrayList line_word =new ArrayList();
 
-            st = new StringTokenizer(text.getString("text"), " ,.;:_-+*/\\.;\n\"'{}()=><\t!?");
-	   while(st.hasMoreTokens())
-	    {
-	      mot = st.nextToken();
-              line_word.add(mot);
-	      if (table.containsKey(mot))
-		{
-		  nbOcc = ((Integer)table.get(mot));
-		  nbOcc++;
-		}
-	      else nbOcc = 1;
-	      table.put(mot, nbOcc);
-	    }
-           matrix.add(line_word);
-           //System.out.println(matrix.get(k));
-           k++;
-	}
+                st = new StringTokenizer(text.getString("text"), " ,.;:_-+*/\\.;\n\"'{}()=><\t!?");
+                while(st.hasMoreTokens()){
+                    mot = st.nextToken();
+                    line_word.add(mot);
+                    if (table.containsKey(mot))
+                      {
+                        nbOcc = ((Integer)table.get(mot));
+                        nbOcc++;
+                      }
+                    else nbOcc = 1;
+                    table.put(mot, nbOcc);
+                    }
+                    matrix.add(line_word);
+                    //System.out.println(matrix.get(k));
+                    k++;
+                }
 
-      Enumeration lesMots = table.keys();
-      ArrayList<Integer> occ =new ArrayList<Integer>();
-      ArrayList word =new ArrayList();
-      
-      
-        while (lesMots.hasMoreElements())
-	{
-	  mot = (String)lesMots.nextElement();
-	  nbOcc = ((Integer)table.get(mot));
-          occ.add(nbOcc);
-          word.add(mot);
-          
-          
-	  //System.out.println("Le mot " + mot + " figure " +nbOcc + " fois");
-	}
-      
-      
-      ArrayList sorted_occ =new ArrayList();
-      ArrayList sorted_word =new ArrayList();
+            Enumeration lesMots = table.keys();
+            ArrayList<Integer> occ =new ArrayList<Integer>();
+            ArrayList word =new ArrayList();
 
- 
-      //we take the top 1000 words by occurencies
-      
-      for (int j=0; j<1000; j++){
-          
-        int nbOccmax=0;
-        int rank=0;
-        int rank_max=0;
-        //String word_number_max=0;
-        
-        sorted_word.add(0);
-        sorted_occ.add(0);
 
-        
-           for(int i = 0 ; i < occ.size(); i++){
-            
-
-            if (occ.get(i) >nbOccmax){
-                nbOccmax=occ.get(i);
-                sorted_word.remove(j);
-                sorted_occ.remove(j);
-                sorted_word.add(j,word.get(i));
-                sorted_occ.add(j,occ.get(i));
-                rank_max=rank;
+            while (lesMots.hasMoreElements())
+            {
+                mot = (String)lesMots.nextElement();
+                nbOcc = ((Integer)table.get(mot));
+                occ.add(nbOcc);
+                word.add(mot);
+              //System.out.println("Le mot " + mot + " figure " +nbOcc + " fois");
             }
-            //System.out.println("Le mot " + mot + " figure " +nbOcc + " fois");
-            rank++;
+
+
+          ArrayList sorted_occ =new ArrayList();
+          ArrayList sorted_word =new ArrayList();
+
+
+          //we take the top 1000 words by occurencies
+
+          for (int j=0; j<1000; j++){
+
+            int nbOccmax=0;
+            int rank=0;
+            int rank_max=0;
+            //String word_number_max=0;
+
+            sorted_word.add(0);
+            sorted_occ.add(0);
+
+
+               for(int i = 0 ; i < occ.size(); i++){
+
+
+                if (occ.get(i) >nbOccmax){
+                    nbOccmax=occ.get(i);
+                    sorted_word.remove(j);
+                    sorted_occ.remove(j);
+                    sorted_word.add(j,word.get(i));
+                    sorted_occ.add(j,occ.get(i));
+                    rank_max=rank;
+                }
+                //System.out.println("Le mot " + mot + " figure " +nbOcc + " fois");
+                rank++;
+              }
+               occ.set(rank_max,0); //on met le nombre d'occurrence max à 0 
+                //System.out.println(sorted_word.get(j));
+                //System.out.println(sorted_occ.get(j));
+
           }
-           occ.set(rank_max,0); //on met le nombre d'occurrence max à 0 
-            //System.out.println(sorted_word.get(j));
-            //System.out.println(sorted_occ.get(j));
-           
-      }
-      
-      //System.out.println(matrix.size());
-        Table<String, String, Integer> coOccurrence = HashBasedTable.create();
-        for (int l=0;l<matrix.size()-1;l++){
-            for (int idx = 0; idx<matrix.get(l).size()-1; idx++) {
-                String token = matrix.get(l).get(idx);
+
+          //System.out.println(matrix.size());
+            Table<String, String, Integer> coOccurrence = HashBasedTable.create();
+            System.out.println(matrix.size());
+                        //System.out.println(matrix);
+
+            // Création de la matrice de coOccurence
+            for (int l=0;l<matrix.size()-1;l++){
+                for (int idx = 0; idx<matrix.get(l).size()-1; idx++) {
+                    String token = matrix.get(l).get(idx);
+                    //System.out.println(token);
+
+                    Map<String, Integer> tokenRow = coOccurrence.row(token);
+
+                    for (int otherIdx = 0; otherIdx <= matrix.get(l).size()-1 ; otherIdx++) {
+                        if (otherIdx < 0 || otherIdx >= matrix.size()) {
+                                                    System.out.println("a");
+
+                            continue;
+                        }
+                        if (otherIdx == idx) {
+                                                  //  System.out.println("b");
+
+                            continue;
+                        }
+                        String other = matrix.get(l).get(otherIdx);
+                        int currentCnt = tokenRow.getOrDefault(other, 0);
+                        tokenRow.put(other, currentCnt + 1);
+
+
+                    }
+
+                }
+
+            }
+
+            int size_graph=matrix.size()*20;
+
+                    //System.out.println(coOccurrence);
+
+            WeightedDirectedGraph g = new WeightedDirectedGraph(size_graph);
+            NodesMapper<String> mapper=new NodesMapper<String>();
+
+            for (int m=0;m<matrix.size()-1;m++){
+            for (int idx1 = 0; idx1<matrix.get(m).size()-1; idx1++) {
+                String token = matrix.get(m).get(idx1);
                 //System.out.println(token);
 
-                Map<String, Integer> tokenRow = coOccurrence.row(token);
-
-                for (int otherIdx = 0; otherIdx <= matrix.get(l).size()-1 ; otherIdx++) {
-                    if (otherIdx < 0 || otherIdx >= matrix.size()) {
+                //On ajoute la valeur des coOccurence dans le graph
+                for (int otherIdx1 = 0; otherIdx1 <= matrix.get(m).size()-1 ; otherIdx1++) {
+                    if (otherIdx1 < 0 || otherIdx1 >= matrix.size()) {
                         continue;
                     }
-                    if (otherIdx == idx) {
+                    if (otherIdx1 == idx1) {
+
                         continue;
                     }
-                    String other = matrix.get(l).get(otherIdx);
-                    //System.out.println(other);
+                    //System.out.println(matrix.get(m).get(idx1));
+                    //System.out.println(coOccurrence.get("gli","amichi"));
+                    if (coOccurrence.get(matrix.get(m).get(otherIdx1),matrix.get(m).get(idx1)) != null) {
+                       // System.out.println(matrix.get(m).get(idx1));
+                    //System.out.println(matrix.get(m).get(otherIdx1));
+
+                    //System.out.println(coOccurrence.get(matrix.get(m).get(otherIdx1),matrix.get(m).get(idx1)));
+
+
+                    g.testAndAdd(mapper.getId(matrix.get(m).get(idx1)), mapper.getId(matrix.get(m).get(otherIdx1)), coOccurrence.get(matrix.get(m).get(idx1), matrix.get(m).get(otherIdx1)));
+                    System.out.println(g);
+                    }
+  
 
                 }
-            }
-        }
-
-        int size_graph=matrix.size();
-
-        System.out.println(size_graph);
-        
-        
-        
-        int worker = (int) (Runtime.getRuntime().availableProcessors());
-
-        logger.info("\t----\t" + size_graph + "@" + 4 + ":" + worker + "\t---");
-        WeightedDirectedGraph g = new WeightedDirectedGraph(size_graph);
-        NodesMapper<String> mapper=new NodesMapper<String>();
-
-        for (int l=0;l<matrix.size()-1;l++){
-        for (int idx = 0; idx<matrix.get(l).size()-1; idx++) {
-            String token = matrix.get(l).get(idx);
-            //System.out.println(token);
-
-
-            for (int otherIdx = 0; otherIdx <= matrix.get(l).size()-1 ; otherIdx++) {
-                if (otherIdx < 0 || otherIdx >= matrix.size()) {
-                    continue;
-                }
-                if (otherIdx == idx) {
-                    continue;
-                }
-                if (coOccurrence.get(matrix.get(l).get(otherIdx),matrix.get(l).get(idx)) != null) {
-                    //System.out.println(matrix.get(l).get(idx));
-                //System.out.println(matrix.get(l).get(otherIdx));
-                coOccurrence.get(matrix.get(l).get(otherIdx),matrix.get(l).get(idx));
-                
-
-                g.testAndAdd(mapper.getId(matrix.get(l).get(idx)), mapper.getId(matrix.get(l).get(otherIdx)), coOccurrence.get(matrix.get(l).get(idx), matrix.get(l).get(otherIdx)));
-
-                }
-                //System.out.println(matrix.get(l).get(idx));
-                //System.out.println(matrix.get(l).get(otherIdx));
-                coOccurrence.get(matrix.get(l).get(otherIdx),matrix.get(l).get(idx));
-                
-
-
+                                                                             // System.out.println(idx1);
 
             }
+                                          //System.out.println(m);
 
         }
-    }        
-        logger.info(Arrays.deepToString(g.out));
-        logger.info(Arrays.deepToString(g.in));
-        logger.info(Arrays.deepToString(g.weights));
+            /*logger.info(Arrays.deepToString(g.out));
+            logger.info(Arrays.deepToString(g.in));
+            logger.info(Arrays.deepToString(g.weights));*/
 
-        g = SubGraphByEdgesWeight.extract(g, 3.0, 1);
-        
-        logger.info(Arrays.deepToString(g.out));
-        logger.info(Arrays.deepToString(g.in));
-        logger.info(Arrays.deepToString(g.weights));
-                MemInfo.info();
+            g = SubGraphByEdgesWeight.extract(g, 3.0, 1);
 
-
-                //GraphReader.readGraph(g,true);
-
-                //g = SubGraphByEdgesWeight.extract(g, 3.0, 1);
+            /*logger.info(Arrays.deepToString(g.out));
+            logger.info(Arrays.deepToString(g.in));
+            logger.info(Arrays.deepToString(g.weights));
+                    MemInfo.info();*/
+                    //GraphReader.readGraph(g,true);
+            br.close();
 
 
-        br.close();
-        
-        
-            // DO SOMETING;
-        }
-    }    
-    
-    
-
-    
-}}
+                // DO SOMETING;
+            }
+        }    
+    }
+}
