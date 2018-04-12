@@ -79,6 +79,7 @@ public class testprojet {
                 ArrayList line_word =new ArrayList();
 
                 st = new StringTokenizer(text.getString("text"), " ,.;:_-+*/\\.;\n\"'{}()=><\t!?");
+                //we take separate words
                 while(st.hasMoreTokens()){
                     mot = st.nextToken();
                     line_word.add(mot);
